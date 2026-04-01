@@ -19,6 +19,6 @@ public class DeviceIdCredentialData {
     public String getDeviceType() { return deviceType; }
     public void setDeviceType(String deviceType) { this.deviceType = deviceType; }
 
-    public long getlastUsedTime() { return lastUsedTime; }
-    public void setlastUsedTime(long lastUsedTime) { this.lastUsedTime = lastUsedTime; }
+    public long getLastUsedTime() { return lastUsedTime; }
+    public void setLastUsedTime(long lastUsedTime) { this.lastUsedTime = lastUsedTime; }
 }

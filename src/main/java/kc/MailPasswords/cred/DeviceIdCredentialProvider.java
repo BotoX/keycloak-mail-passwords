@@ -19,7 +19,7 @@ public class DeviceIdCredentialProvider implements CredentialProvider<DeviceIdCr
 
     private static final Logger logger = Logger.getLogger(MailPasswordCredentialProvider.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-      .withZone(ZoneId.of("UTC"));
+      .withZone(ZoneId.systemDefault());
 
     private final KeycloakSession session;
 
@@ -79,7 +79,7 @@ public class DeviceIdCredentialProvider implements CredentialProvider<DeviceIdCr
         properties.add(new CredentialMetadata.LocalizedMessage("device-type",
             new String[] { data.getDeviceType() }));
         properties.add(new CredentialMetadata.LocalizedMessage("lastAccessedOn",
-            new String[] { formatter.format(Instant.ofEpochMilli(data.getlastUsedTime())) }));
+            new String[] { formatter.format(Instant.ofEpochMilli(data.getLastUsedTime())) }));
 
         credentialMetadata.setInfoProperties(properties);
 
@@ -94,7 +94,7 @@ public class DeviceIdCredentialProvider implements CredentialProvider<DeviceIdCr
         for (CredentialModel c : creds) {
             DeviceIdCredentialModel dev = DeviceIdCredentialModel.createFromCredentialModel(c);
             if (deviceId.equals(dev.getDeviceIdCredentialData().getDeviceId()) && deviceType.equals(dev.getDeviceIdCredentialData().getDeviceType())) {
-                long lastUsedTime = dev.getDeviceIdCredentialData().getlastUsedTime();
+                long lastUsedTime = dev.getDeviceIdCredentialData().getLastUsedTime();
                 dev.updateLastUsed();
                 user.credentialManager().updateStoredCredential(dev);
                 return lastUsedTime;

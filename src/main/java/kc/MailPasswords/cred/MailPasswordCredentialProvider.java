@@ -20,7 +20,7 @@ public class MailPasswordCredentialProvider
 
     private static final Logger logger = Logger.getLogger(MailPasswordCredentialProvider.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-            .withZone(ZoneId.of("UTC"));
+            .withZone(ZoneId.systemDefault());
 
     private final KeycloakSession session;
 

@@ -58,7 +58,7 @@ public class DeviceIdCredentialModel extends CredentialModel {
     }
 
     public void updateLastUsed() {
-        credentialData.setlastUsedTime(Time.currentTimeMillis());
+        credentialData.setLastUsedTime(Time.currentTimeMillis());
         try {
             setCredentialData(JsonSerialization.writeValueAsString(credentialData));
         } catch (IOException e) {
