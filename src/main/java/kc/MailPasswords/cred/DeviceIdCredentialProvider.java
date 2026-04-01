@@ -60,8 +60,8 @@ public class DeviceIdCredentialProvider implements CredentialProvider<DeviceIdCr
         return CredentialTypeMetadata.builder()
                 .type(getType())
                 .category(CredentialTypeMetadata.Category.TWO_FACTOR)
-                .displayName("ActiveSync Trusted Device")
-                .helpText("Trusted ActiveSync DeviceID.")
+                .displayName("activesync-deviceid-display-name")
+                .helpText("activesync-deviceid-help-text")
                 .removeable(true)
                 .build(session);
     }
@@ -74,9 +74,9 @@ public class DeviceIdCredentialProvider implements CredentialProvider<DeviceIdCr
         DeviceIdCredentialModel deviceIdModel = DeviceIdCredentialModel.createFromCredentialModel(credentialModel);
         DeviceIdCredentialData data = deviceIdModel.getDeviceIdCredentialData();
 
-        properties.add(new CredentialMetadata.LocalizedMessage("Device ID",
+        properties.add(new CredentialMetadata.LocalizedMessage("device-id",
             new String[] { data.getDeviceId() }));
-        properties.add(new CredentialMetadata.LocalizedMessage("Device Type",
+        properties.add(new CredentialMetadata.LocalizedMessage("device-type",
             new String[] { data.getDeviceType() }));
         properties.add(new CredentialMetadata.LocalizedMessage("lastAccessedOn",
             new String[] { formatter.format(Instant.ofEpochMilli(data.getlastUsedTime())) }));

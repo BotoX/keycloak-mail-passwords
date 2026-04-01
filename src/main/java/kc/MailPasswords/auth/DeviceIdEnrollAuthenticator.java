@@ -31,7 +31,7 @@ public class DeviceIdEnrollAuthenticator implements Authenticator {
 
     private static final Logger logger = Logger.getLogger(MailPasswordEnrollAuthenticator.class);
 
-    private static final String TOKEN_PARAM = "token";
+    private static final String TOKEN_PARAM = "enroll_token";
 
     public record TokenResult(String deviceId, String deviceType, String subject) {}
 
@@ -47,7 +47,7 @@ public class DeviceIdEnrollAuthenticator implements Authenticator {
         String token = q.getFirst(TOKEN_PARAM);
         if (token == null) {
             // No token -> nothing to enroll
-            logger.warn("DeviceIdEnrollAuthenticator: No token in request");
+            logger.warnf("DeviceIdEnrollAuthenticator: No '%s' in request", TOKEN_PARAM);
             context.attempted();
             return null;
         }
@@ -117,6 +117,19 @@ public class DeviceIdEnrollAuthenticator implements Authenticator {
             return;
         }
 
+        RealmModel realm = context.getRealm();
+        KeycloakSession session = context.getSession();
+
+        DeviceIdCredentialProvider provider = (DeviceIdCredentialProvider)
+                session.getProvider(CredentialProvider.class, DeviceIdCredentialProviderFactory.PROVIDER_ID);
+
+        long lastUsedTime = provider.getDeviceIdLastUsedTime(realm, user, tokenResult.deviceId(), tokenResult.deviceType());
+        if (lastUsedTime != -1) {
+            // Device already exists
+            context.success();
+            return;
+        }
+
         // Show confirmation page
         LoginFormsProvider forms = context.form();
         forms.setAttribute("deviceId", tokenResult.deviceId());
@@ -152,6 +165,13 @@ public class DeviceIdEnrollAuthenticator implements Authenticator {
 
         DeviceIdCredentialProvider provider = (DeviceIdCredentialProvider)
                 session.getProvider(CredentialProvider.class, DeviceIdCredentialProviderFactory.PROVIDER_ID);
+
+        long lastUsedTime = provider.getDeviceIdLastUsedTime(realm, user, tokenResult.deviceId(), tokenResult.deviceType());
+        if (lastUsedTime != -1) {
+            // Device already exists
+            context.success();
+            return;
+        }
 
         provider.createDeviceIdCredential(realm, user, tokenResult.deviceId(), tokenResult.deviceType(), userLabel);
 
