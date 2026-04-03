@@ -31,8 +31,6 @@ public class DeviceIdEnrollAuthenticator implements Authenticator {
 
     private static final Logger logger = Logger.getLogger(MailPasswordEnrollAuthenticator.class);
 
-    private static final String TOKEN_PARAM = "enroll_token";
-
     public record TokenResult(String deviceId, String deviceType, String subject) {}
 
     private static TokenResult parseToken(AuthenticationFlowContext context) {
@@ -43,11 +41,10 @@ public class DeviceIdEnrollAuthenticator implements Authenticator {
             return null;
         }
 
-        MultivaluedMap<String, String> q = context.getHttpRequest().getUri().getQueryParameters();
-        String token = q.getFirst(TOKEN_PARAM);
+        String token = context.getAuthenticationSession().getAuthNote(StoreTokenAuthenticator.TOKEN_NOTE);
         if (token == null) {
             // No token -> nothing to enroll
-            logger.warnf("DeviceIdEnrollAuthenticator: No '%s' in request", TOKEN_PARAM);
+            logger.warnf("DeviceIdEnrollAuthenticator: No TOKEN_NOTE '%s' set (query parameter not set)", StoreTokenAuthenticator.TOKEN_NOTE);
             context.attempted();
             return null;
         }

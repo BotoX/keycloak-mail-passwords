@@ -3,3 +3,4 @@ kc.MailPasswords.auth.DeviceIdDirectGrantAuthenticatorFactory
 kc.MailPasswords.auth.MailPasswordEnrollAuthenticatorFactory
 kc.MailPasswords.auth.DeviceIdEnrollAuthenticatorFactory
 kc.MailPasswords.auth.TransientSessionAuthenticator
+kc.MailPasswords.auth.StoreTokenAuthenticator
