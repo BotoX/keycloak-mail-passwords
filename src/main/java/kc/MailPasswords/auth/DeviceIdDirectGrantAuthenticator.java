@@ -51,11 +51,7 @@ public class DeviceIdDirectGrantAuthenticator implements Authenticator {
             return;
         }
 
-        if (lastUsedTime > 0) {
-            context.getAuthenticationSession().setUserSessionNote("acr", "deviceId+known");
-        } else {
-            context.getAuthenticationSession().setUserSessionNote("acr", "deviceId+new");
-        }
+        context.getAuthenticationSession().setUserSessionNote("acr", "deviceId");
 
         context.success();
     }
