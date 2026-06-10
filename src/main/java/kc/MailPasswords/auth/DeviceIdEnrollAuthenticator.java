@@ -1,9 +1,5 @@
 package kc.MailPasswords.auth;
 
-import static kc.MailPasswords.auth.DeviceIdEnrollAuthenticatorFactory.CONF_JWT_AUD;
-import static kc.MailPasswords.auth.DeviceIdEnrollAuthenticatorFactory.CONF_JWT_ISS;
-import static kc.MailPasswords.auth.DeviceIdEnrollAuthenticatorFactory.CONF_JWT_SECRET;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
@@ -11,7 +7,11 @@ import org.jboss.logging.Logger;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.authentication.AuthenticationFlowError;
 import org.keycloak.authentication.Authenticator;
+import org.keycloak.credential.CredentialModel;
 import org.keycloak.credential.CredentialProvider;
+import org.keycloak.events.Details;
+import org.keycloak.events.EventBuilder;
+import org.keycloak.events.EventType;
 import org.keycloak.forms.login.LoginFormsProvider;
 import org.keycloak.models.AuthenticatorConfigModel;
 import org.keycloak.models.KeycloakSession;
@@ -24,6 +24,10 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;
+import static kc.MailPasswords.auth.DeviceIdEnrollAuthenticatorFactory.CONF_JWT_AUD;
+import static kc.MailPasswords.auth.DeviceIdEnrollAuthenticatorFactory.CONF_JWT_ISS;
+import static kc.MailPasswords.auth.DeviceIdEnrollAuthenticatorFactory.CONF_JWT_SECRET;
+import kc.MailPasswords.cred.DeviceIdCredentialModel;
 import kc.MailPasswords.cred.DeviceIdCredentialProvider;
 import kc.MailPasswords.cred.DeviceIdCredentialProviderFactory;
 
@@ -170,7 +174,13 @@ public class DeviceIdEnrollAuthenticator implements Authenticator {
             return;
         }
 
-        provider.createDeviceIdCredential(realm, user, tokenResult.deviceId(), tokenResult.deviceType(), userLabel);
+        CredentialModel credential = provider.createDeviceIdCredential(realm, user, tokenResult.deviceId(), tokenResult.deviceType(), userLabel);
+
+        EventBuilder event = context.getEvent();
+        event.event(EventType.UPDATE_CREDENTIAL)
+                .detail(Details.CREDENTIAL_TYPE, DeviceIdCredentialModel.TYPE)
+                .detail(Details.CREDENTIAL_USER_LABEL, userLabel)
+                .detail(Details.CREDENTIAL_ID, credential.getId());
 
         context.success();
     }

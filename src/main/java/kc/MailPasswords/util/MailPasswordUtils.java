@@ -28,7 +28,6 @@ public final class MailPasswordUtils {
     public static CredentialModel createMailAppPassword(KeycloakSession session, RealmModel realm, UserModel user,
             String password, String label) {
         MailPasswordCredentialModel model = MailPasswordCredentialModel.create(session, realm, password, label);
-        user.credentialManager().createStoredCredential(model);
-        return model;
+        return user.credentialManager().createStoredCredential(model);
     }
 }

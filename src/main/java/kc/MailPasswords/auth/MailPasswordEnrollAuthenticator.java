@@ -1,16 +1,22 @@
 package kc.MailPasswords.auth;
 
-import kc.MailPasswords.util.MailPasswordUtils;
-
 import org.jboss.logging.Logger;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.authentication.AuthenticationFlowError;
 import org.keycloak.authentication.Authenticator;
-import org.keycloak.models.*;
+import org.keycloak.credential.CredentialModel;
+import org.keycloak.events.Details;
+import org.keycloak.events.EventBuilder;
+import org.keycloak.events.EventType;
+import org.keycloak.models.KeycloakSession;
+import org.keycloak.models.RealmModel;
+import org.keycloak.models.UserModel;
 import org.keycloak.models.utils.FormMessage;
 
 import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;
+import kc.MailPasswords.cred.MailPasswordCredentialModel;
+import kc.MailPasswords.util.MailPasswordUtils;
 
 public class MailPasswordEnrollAuthenticator implements Authenticator {
 
@@ -54,7 +60,14 @@ public class MailPasswordEnrollAuthenticator implements Authenticator {
             return;
         }
 
-        MailPasswordUtils.createMailAppPassword(context.getSession(), context.getRealm(), user, password, userLabel);
+        CredentialModel credential = MailPasswordUtils.createMailAppPassword(context.getSession(), context.getRealm(), user, password, userLabel);
+
+        EventBuilder event = context.getEvent();
+        event.event(EventType.UPDATE_CREDENTIAL)
+                .detail(Details.CREDENTIAL_TYPE, MailPasswordCredentialModel.TYPE)
+                .detail(Details.CREDENTIAL_USER_LABEL, userLabel)
+                .detail(Details.CREDENTIAL_ID, credential.getId());
+
         context.success();
     }
 
