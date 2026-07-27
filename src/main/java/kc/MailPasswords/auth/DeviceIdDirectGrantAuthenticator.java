@@ -54,17 +54,15 @@ public class DeviceIdDirectGrantAuthenticator implements Authenticator {
         MultivaluedMap<String, String> params = context.getHttpRequest().getDecodedFormParameters();
         String deviceId = params.getFirst("DeviceId");
         if (deviceId == null || deviceId.isEmpty()) {
-            logger.warn("DeviceIdDirectGrantAuthenticator: No DeviceId in request");
-            Response res = errorResponse(400, "invalid_grant", "No DeviceId in request");
-            context.failure(AuthenticationFlowError.INVALID_CREDENTIALS, res);
+            logger.debug("DeviceIdDirectGrantAuthenticator: No DeviceId in request");
+            context.attempted();
             return;
         }
 
         String deviceType = params.getFirst("DeviceType");
         if (deviceType == null || deviceType.isEmpty()) {
-            logger.warn("DeviceIdDirectGrantAuthenticator: No DeviceType in request");
-            Response res = errorResponse(400, "invalid_grant", "No DeviceType in request");
-            context.failure(AuthenticationFlowError.INVALID_CREDENTIALS, res);
+            logger.debug("DeviceIdDirectGrantAuthenticator: No DeviceType in request");
+            context.attempted();
             return;
         }
 

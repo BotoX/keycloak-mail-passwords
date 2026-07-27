@@ -70,7 +70,8 @@ public class StoreTokenAuthenticator implements Authenticator, AuthenticatorFact
     }
 
     public static final AuthenticationExecutionModel.Requirement[] REQUIREMENT_CHOICES = {
-            AuthenticationExecutionModel.Requirement.REQUIRED
+            AuthenticationExecutionModel.Requirement.REQUIRED,
+            AuthenticationExecutionModel.Requirement.DISABLED
     };
 
     @Override
